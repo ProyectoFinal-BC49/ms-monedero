@@ -1,0 +1,146 @@
+openapi: 3.0.1
+info:
+  title: Microservicio de Monedero digital "Yanki"
+  version: 1.0.0
+  description: |
+    Microservicio se encargará de gestionar todas las funcionalidades relacionadas con el monedero móvil, como la creación de cuentas de monedero, recepción y envío de pagos, y la asociación con tarjetas de débito
+  termsOfService: https://www.example.com/terms
+  contact:
+    email: vertkle@gmail.com
+  license:
+    name: Licencia MIT
+    url: https://www.example.com/license
+servers:
+  - url: http://localhost:8080/api/v1
+
+
+paths:
+  /wallet:
+    get:
+      operationId: getAllWallets
+      summary: Obtener todos los wallets
+      tags:
+        - Wallet
+      responses:
+        '200':
+          description: Lista de wallets obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Wallet'
+    post:
+      operationId: createWallet
+      summary: Agregar Wallet
+      tags:
+        - Wallet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Wallet'
+      responses:
+        '201':
+          description: Cuenta bancaria creada exitosamente
+        '400':
+          description: Error en Request
+  /wallet/{wallet_id}:
+    get:
+      operationId: getWalletById
+      summary: Obtener detalle de Wallet
+      tags:
+        - Wallet
+      parameters:
+        - name: wallet_id
+          in: path
+          description: ID del wallet
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detalle de Wallet obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+        '400':
+          description: Error en request
+        '404':
+          description: Recurso no encontrado
+
+    delete:
+      operationId: deleteWallet
+      summary: Eliminar Wallet
+      tags:
+        - Wallet
+      parameters:
+        - name: wallet_id
+          in: path
+          description: ID del wallet
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cuenta bancaria eliminada exitosamente
+        '400':
+          description: Error en request
+        '404':
+          description: Recurso no encontrado
+
+  /movement_wallet/send:
+    post:
+      operationId: createMovementWallet
+      summary: crear movimiento del wallet, enviar dinero.
+      tags:
+        - Movement Wallet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovementWallet'
+      responses:
+        '201':
+          description: Envío exitoso
+        '400':
+          description: Error en request
+        '404':
+          description: Recurso no encontrado
+
+components:
+  schemas:
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: string
+        typeDocumentIdentification:
+          type: string
+        numberIdentification:
+          type: string
+        numberPhone:
+          type: string
+        imeiPhone:
+          type: string
+        email:
+          type: string
+        cardDebitAssociate:
+          type: string
+        balanceTotal:
+          type: number
+
+    MovementWallet:
+      type: object
+      properties:
+        id:
+          type: string
+        monederoId:
+          type: string
+        destinationFor:
+          type: string
+        dateMovement:
+          type: string
+        mount:
+          type: number
